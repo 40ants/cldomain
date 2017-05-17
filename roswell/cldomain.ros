@@ -6,7 +6,14 @@ exec ros -Q -- $0 "$@"
 (progn ;;init forms
   (ros:ensure-asdf)
   #+quicklisp
-  (ql:quickload '(cldomain) :silent t))
+  (progn
+    ;; We need to suppress error output from net.didierverna.clon,
+    ;; because it complains about missing CC env variable
+    (with-output-to-string (*error-output*)
+      (ql:quickload :net.didierverna.clon
+                    :silent t))
+    (ql:quickload :cldomain
+                  :silent t)))
 
 (defpackage :ros/script/cldomain
   (:use #:cl
@@ -30,11 +37,10 @@ exec ros -Q -- $0 "$@"
 
 (defun main (&rest argv)
   "Entry point for our standalone application."
-  (declare (ignorable argv))
 
   (make-context
    :cmdline
-   (uiop:raw-command-line-arguments))
+   (cons "cldomain" argv))
   
   (when (getopt :short-name "h")
     (help)
