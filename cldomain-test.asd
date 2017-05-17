@@ -7,10 +7,10 @@
   (:use :cl :asdf))
 (in-package :sphinxcontrib.cldomain-test-asd)
 
-(defsystem sphinxcontrib.cldomain-test
+(defsystem cldomain-test
   :author ""
   :license ""
-  :depends-on (:sphinxcontrib.cldomain
+  :depends-on (:cldomain
                :prove
                :hamcrest-prove)
   :components ((:module "t"

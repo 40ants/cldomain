@@ -9,7 +9,7 @@
 (in-package :sphinxcontrib.cldomain-asd)
 
 
-(defsystem sphinxcontrib.cldomain
+(defsystem cldomain
   :version (:read-file-form "version.lisp-expr")
   :author ""
   :license ""
