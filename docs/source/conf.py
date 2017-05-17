@@ -43,7 +43,7 @@ extensions = [
 from os.path import join, dirname, realpath, expandvars
 cl_systems = [
     {
-        'name': 'sphinxcontrib.cldomain-test',
+        'name': 'cldomain',
         'path': join(dirname(realpath(__file__)), '../../'),
         'packages': [
             'sphinxcontrib.cldomain',
