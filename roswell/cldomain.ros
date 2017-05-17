@@ -42,7 +42,8 @@ exec ros -Q -- $0 "$@"
    :cmdline
    (cons "cldomain" argv))
   
-  (when (getopt :short-name "h")
+  (when (or (null argv)
+            (getopt :short-name "h"))
     (help)
     (exit 1))
   
