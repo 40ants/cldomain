@@ -1,0 +1,90 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#| <Put a one-line description here>
+exec ros -Q -- $0 "$@"
+|#
+(progn ;;init forms
+  (ros:ensure-asdf)
+  #+quicklisp
+  (ql:quickload '(sphinxcontrib.cldomain) :silent t))
+
+(defpackage :ros.script.cldomain.3703932643
+  (:use #:cl
+        #:sphinxcontrib.cldomain
+        #:json
+        #:net.didierverna.clon))
+(in-package :ros.script.cldomain.3703932643)
+
+
+(defsynopsis ()
+  (group (:header "Options:")
+         (stropt :long-name "path"
+                 :description "Extra paths to search fro ASDF systems.")
+         (stropt :long-name "system"
+                 :description "The system to load.")
+         (stropt :long-name "package"
+                 :description "The packages to document.")
+         (flag :short-name "h" :long-name "help"
+               :description "Print this help and exit.")))
+
+
+(defun main (&rest argv)
+  "Entry point for our standalone application."
+  (declare (ignorable argv))
+
+  (make-context
+   :cmdline
+   (uiop:raw-command-line-arguments))
+  
+  (when (getopt :short-name "h")
+    (help)
+    (exit 1))
+  
+  (let (systems packages paths)
+    (do-cmdline-options (option name value source)
+
+      ;; Using condition only to use source variable
+      ;; and make compiler happy. Actually,
+      ;; the warning should be fixed in net.didierverna.clon
+      (when (eql source :cmdline)
+        (cond
+          ((equal name "system") (push value systems))
+          ((equal name "package") (push value packages))
+          ((equal name "path") (push value paths)))))
+
+    ;; Add all additional paths to ASDF's registry
+    (dolist (path paths)
+      (let ((path-pathname (pathname path)))
+        ;; CLISP's truename spews if path is a directory, whereas ext:probe-filename
+        ;; will generate a directory-truename for directories without spewing...???
+        #+clisp
+        (let ((dir-truename (ext:probe-pathname path)))
+          (when dir-truename
+            (push  dir-truename asdf:*central-registry*)))
+        #-clisp
+        (push (truename path-pathname) asdf:*central-registry*)))
+
+    ;; Load all named systems
+    (dolist (system systems)
+      (let ((*standard-output* *error-output*))
+        (ql:quickload system
+                      :prompt nil
+                      :silent t)))
+
+    ;; Process given packages and generate JSON
+    ;; with documentation strings
+    (let ((json (with-output-to-string (json:*json-output*)
+                  (with-object ()
+                    (dolist (package packages)
+                      (let ((*current-package*
+                              (find-package (intern (string-upcase package)))))
+                        (when (null *current-package*)
+                          (format *error-output*
+                                  "ERROR: package ~S was not found~%"
+                                  package)
+                          (exit 2))
+                        (symbols-to-json)))))))
+
+      (write-string json)))
+  
+  (exit))
