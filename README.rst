@@ -27,10 +27,12 @@ markup, sphinx based documentation is very readable and it is easy to
 use internal hyperlinks between different documents and code.
 
 
-Building Documentation
-======================
+Usage
+=====
 
-TODO: write a section.
+Install cldomain using roswell::
+
+  ros install 40ants/cldomain
 
 
 How to build documentation

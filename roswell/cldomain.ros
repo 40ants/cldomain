@@ -8,12 +8,12 @@ exec ros -Q -- $0 "$@"
   #+quicklisp
   (ql:quickload '(sphinxcontrib.cldomain) :silent t))
 
-(defpackage :ros.script.cldomain.3703932643
+(defpackage :ros/script/cldomain
   (:use #:cl
         #:sphinxcontrib.cldomain
         #:json
         #:net.didierverna.clon))
-(in-package :ros.script.cldomain.3703932643)
+(in-package :ros/script/cldomain)
 
 
 (defsynopsis ()
