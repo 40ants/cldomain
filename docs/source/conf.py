@@ -46,7 +46,7 @@ cl_systems = [
         'name': 'cldomain',
         'path': join(dirname(realpath(__file__)), '../../'),
         'packages': [
-            'sphinxcontrib.cldomain',
+            'sphinxcontrib.cldomain.doc',
         ]
     },
 ]

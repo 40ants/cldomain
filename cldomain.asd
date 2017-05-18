@@ -19,7 +19,8 @@
   :entry-point "sphinxcontrib.cldomain:main"
   :components ((:module "src"
                 :components
-                ((:file "sphinxcontrib.cldomain"))))
+                ((:file "sphinxcontrib.cldomain")
+                 (:file "doc"))))
   :description "A documentation tool."
   :long-description
   #.(with-open-file (stream (merge-pathnames
