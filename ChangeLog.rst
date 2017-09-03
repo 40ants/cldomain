@@ -1,11 +1,14 @@
-0.14 (unreleased)
+0.14 (2017-09-04)
 =================
 
+* cldomain was forked.
 * Script was made a separate lisp system and ported from cl-launch_ to
   roswell_.
 * Now it reports if some package wasn't found and returns proper exit
   codes to command line.
-
+* Added dependency from cl-cont and ability to extract documentation
+  from functions created by cl-cont.
+  
 0.13 06-09-2015
 ===============
 
