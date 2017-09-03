@@ -13,7 +13,11 @@
   :version (:read-file-form "version.lisp-expr")
   :author ""
   :license ""
-  :depends-on (:net.didierverna.clon :cl-json :alexandria :closer-mop
+  :depends-on (:net.didierverna.clon
+               :cl-json
+               :alexandria
+               :closer-mop
+               :cl-cont ;; to process functions of cl-cont::funcallable/cc type
                #+sbcl :sb-introspect)
   :defsystem-depends-on (:asdf)
   :entry-point "sphinxcontrib.cldomain:main"

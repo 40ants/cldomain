@@ -35,6 +35,7 @@
 
 (in-package sphinxcontrib.cldomain)
 
+
 (defvar *current-package* nil)
 
 (defun print-message (message)
@@ -307,6 +308,10 @@ possible symbol names."
   (:documentation
    "Encode documentation for a symbol as a JSON object member."))
 
+(defgeneric encode-function-documentation (symbol type)
+  (:documentation
+   "Encode documentation for a function or macro as a JSON object member."))
+
 (defmethod encode-function-documentation (symbol (type (eql 'function)))
   (encode-function-documentation*
    symbol type (or (documentation symbol type) "")))
@@ -329,6 +334,15 @@ possible symbol names."
 
 (defmethod encode-function-documentation (symbol (type (eql 'cl:standard-generic-function)))
   (encode-function-documentation symbol 'generic-function))
+
+(defmethod encode-function-documentation (symbol (type (eql 'cl-cont::funcallable/cc)))
+  (encode-function-documentation symbol 'function))
+
+;; 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Value documentation method ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defmethod encode-value-documentation (symbol (type (eql 'variable)))
   (encode-variable-documentation* symbol type))
@@ -379,13 +393,20 @@ possible symbol names."
     (as-object-member ((encode-symbol symbol))
       (with-object ()
         (encode-symbol-status symbol package)
-        (when (symbol-function-type symbol)
-          ;; (format *error-output* "symbol ~S type ~S~%"symbol (symbol-function-type symbol))
-          (encode-function-documentation symbol (symbol-function-type symbol)))
-        (when (class-p symbol)
-          (encode-value-documentation symbol 'type))
-        (when (variable-p symbol)
-          (encode-value-documentation symbol 'variable))))))
+        (cond
+          ((symbol-function-type symbol)
+            ;; (format *error-output* "symbol ~S type ~S~%"symbol (symbol-function-type symbol))
+            (encode-function-documentation symbol (symbol-function-type symbol)))
+          ((class-p symbol)
+            (encode-value-documentation symbol 'type))
+          ((variable-p symbol)
+            (encode-value-documentation symbol 'variable)))))))
+
+
+(defun test-symbols-to-json (package)
+  (with-output-to-string (json:*json-output*)
+    (with-object ()
+      (symbols-to-json package))))
 
 
 (defmacro push-opt (value name)
