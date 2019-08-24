@@ -297,7 +297,7 @@ possible symbol names."
     (simplify-arglist (arglist symbol))))
   (encode-object-member
    'arguments
-   (format nil "~S" (arglist symbol))))
+   (format nil "~A" (arglist symbol))))
 
 (defun encode-variable-documentation* (symbol type)
   (encode-object-member
